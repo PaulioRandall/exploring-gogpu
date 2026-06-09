@@ -3,14 +3,13 @@ package main
 import (
 	"log"
 
-	"github.com/PaulioRandall/exploring-gogpu/app"
+	"github.com/PaulioRandall/exploring-gogpu/example_app"
 )
 
 func main() {
-	a := app.NewApplication()
-	defer a.Close()
+	ea := example_app.NewExampleApp()
 
-	if e := a.Run(); e != nil {
-		log.Fatal(e)
+	if err := ea.Run(); err != nil {
+		log.Fatal(err)
 	}
 }
