@@ -52,8 +52,8 @@ godoTest() {
 }
 
 godoBuild() {
-	println "go build -o /dev/null ."
-	go build -o /dev/null .
+	println "CGO_ENABLED=0 go build -o /dev/null ."
+	CGO_ENABLED=0 go build -o /dev/null .
 }
 
 godoRun() {

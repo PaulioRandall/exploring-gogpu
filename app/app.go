@@ -1,13 +1,10 @@
 package app
 
 import (
-	_ "github.com/gogpu/gg/gpu"
-
-	"github.com/gogpu/gg"
 	"github.com/gogpu/gogpu"
 
-	"github.com/gogpu/ui/app"
-	"github.com/gogpu/ui/desktop"
+	_a "github.com/gogpu/ui/app"
+	_d "github.com/gogpu/ui/desktop"
 
 	"github.com/PaulioRandall/exploring-gogpu/grid_canvas"
 )
@@ -17,49 +14,50 @@ import (
 
 type Application struct {
 	gogpuApp *gogpu.App
-	uiApp    *app.App
-
-	drawCtx    *gg.Context
-	gridCanvas grid_canvas.GridCanvas
+	uiApp    *_a.App
 }
 
 func NewApplication() *Application {
 	gogpuApp := createGoGPU()
 	uiApp := createUiApp(gogpuApp)
-	drawCtx := gg.NewContext(100, 100)
-	gridCanvas := grid_canvas.Make(drawCtx)
+
+	gridCanvas := grid_canvas.NewGridCanvas()
 
 	uiApp.SetRoot(gridCanvas.AsWidget())
 
+	gogpuApp.OnDraw(func(ctx *gogpu.Context) {
+		println("HERE!!")
+		ctx.Clear(0.5, 0.5, 0.5, 1.0)
+		uiApp.Frame()
+	})
+
 	return &Application{
-		gogpuApp:   gogpuApp,
-		uiApp:      uiApp,
-		drawCtx:    drawCtx,
-		gridCanvas: gridCanvas,
+		gogpuApp: gogpuApp,
+		uiApp:    uiApp,
 	}
 }
 
 func createGoGPU() *gogpu.App {
 	config := gogpu.DefaultConfig().
-		WithTitle("My App").
+		WithTitle("Grid Canvas").
 		WithSize(800, 600).
 		WithContinuousRender(false)
 
 	return gogpu.NewApp(config)
 }
 
-func createUiApp(gogpuApp *gogpu.App) *app.App {
-	return app.New(
-		app.WithWindowProvider(gogpuApp),
-		app.WithPlatformProvider(gogpuApp),
-		app.WithEventSource(gogpuApp.EventSource()),
+func createUiApp(gogpuApp *gogpu.App) *_a.App {
+	return _a.New(
+		_a.WithWindowProvider(gogpuApp),
+		_a.WithPlatformProvider(gogpuApp),
+		_a.WithEventSource(gogpuApp.EventSource()),
 	)
 }
 
 func (a *Application) Run() error {
-	return desktop.Run(a.gogpuApp, a.uiApp)
+	return _d.Run(a.gogpuApp, a.uiApp)
 }
 
 func (a *Application) Close() {
-	a.drawCtx.Close()
+	// TODO
 }
