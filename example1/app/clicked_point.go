@@ -1,4 +1,4 @@
-package clickable_area
+package app
 
 import (
 	"fmt"

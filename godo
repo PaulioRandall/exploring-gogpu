@@ -16,10 +16,8 @@ printUsage() {
 	println "\t" "./godo [-noclear] clean   " "\t\t" "Clean Go caches"
 	println "\t" "./godo [-noclear] tidy    " "\t\t" "Tidy Go mod"
 	println "\t" "./godo [-noclear] format  " "\t\t" "Format all Go code"
-	println "\t" "./godo [-noclear] build   " "\t\t" "tidy -> format -> build"
 	println "\t" "./godo [-noclear] test    " "\t\t" "tidy -> format -> test -> vet"
-	println "\t" "./godo [-noclear] run     " "\t\t" "tidy -> format -> run"
-	println "\t" "./godo [-noclear] audit   " "\t\t" "clean -> tidy -> format -> build -> test -> vet"
+	println "\t" "./godo [-noclear] audit   " "\t\t" "clean -> tidy -> format -> test -> vet"
 	println "\t" "./godo [-noclear] example1" "\t\t" "Runs example 1: Minimal app"
 }
 
@@ -51,19 +49,14 @@ godoTest() {
 	go test ./... -timeout "2s"
 }
 
-godoBuild() {
-	println "CGO_ENABLED=0 go build -o /dev/null ."
-	CGO_ENABLED=0 go build -o /dev/null .
-}
-
-godoRun() {
-	println "CGO_ENABLED=0 go run main.go"
-	CGO_ENABLED=0 go run main.go
-}
-
 godoVet() {
 	println "go vet ./..."
 	go vet ./...
+}
+
+godoRun() {
+	println "CGO_ENABLED=0 go run '$1/main.go'"
+	CGO_ENABLED=0 go run "$1/main.go"
 }
 
 if [[ "$1" == "" || "$1" == "help" ]]; then
@@ -86,13 +79,6 @@ if [[ "$1" == "format" ]]; then
 	exit 0
 fi
 
-if [[ "$1" == "build" ]]; then
-	godoTidy
-	godoFormat
-	godoBuild
-	exit 0
-fi
-
 if [[ "$1" == "test" ]]; then
 	godoTidy
 	godoFormat
@@ -101,20 +87,19 @@ if [[ "$1" == "test" ]]; then
 	exit 0
 fi
 
-if [[ "$1" == "run" ]]; then
-	godoTidy
-	godoFormat
-	godoRun
-	exit 0
-fi
-
 if [[ "$1" == "audit" ]]; then
 	godoClean
 	godoTidy
 	godoFormat
-	godoBuild
 	godoTest
 	godoVet
+	exit 0
+fi
+
+if [[ "$1" == example* ]]; then
+	godoTidy
+	godoFormat
+	godoRun $1
 	exit 0
 fi
 

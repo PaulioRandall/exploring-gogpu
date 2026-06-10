@@ -1,4 +1,4 @@
-package example_app
+package app
 
 import (
 	// The gogpu graphics suite has a highly decoupled and
@@ -14,11 +14,6 @@ import (
 	_g "github.com/gogpu/gogpu"
 	_a "github.com/gogpu/ui/app"
 	_d "github.com/gogpu/ui/desktop"
-
-	// clickable_area is a custom widget I created that
-	// detects mouse clicks and places boxes containing the
-	// mouse click location at the mosue click location.
-	"github.com/PaulioRandall/exploring-gogpu/clickable_area"
 )
 
 type ExampleApp struct {
@@ -37,9 +32,8 @@ func NewExampleApp() *ExampleApp {
 	// created.
 	uiApp := createUiApp(gogpuApp)
 
-	// Create an instance of the ClickableArea custom widget
-	// from the clickable_area package I created.
-	clickableArea := clickable_area.NewClickableArea()
+	// Create an instance of the ClickableArea custom widget.
+	clickableArea := NewClickableArea()
 
 	// Set the custom widget as the top-level (root) widget
 	// of the UI.
